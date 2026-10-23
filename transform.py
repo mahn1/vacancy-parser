@@ -40,7 +40,9 @@ def _clean_text(value) -> str:
 
 
 # Портал пишет один и тот же навык то как «SQL», то как «Навык работы с SQL»
-SKILL_PREFIX = re.compile(r"^(навыки?|умение|знание)\s+работы\s+(с|со|в)\s+", re.IGNORECASE)
+SKILL_PREFIX = re.compile(
+    r"^(навыки?\s+работы\s+(с|со|в)|умение\s+работать\s+(с|со|в)|знание|владение)\s+", re.IGNORECASE
+)
 
 
 def _parse_date(value) -> date | None:

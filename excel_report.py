@@ -26,12 +26,12 @@ COLUMNS = [
     ("Вакансия", 45),
     ("Компания", 35),
     ("Регион", 25),
-    ("Зарплата от, ₽", 15),
-    ("Зарплата до, ₽", 15),
+    ("Зарплата от, ₽", 18),
+    ("Зарплата до, ₽", 18),
     ("Опыт", 12),
     ("График", 28),
     ("Навыки", 50),
-    ("Опубликована", 14),
+    ("Опубликована", 17),
     ("Ссылка", 12),
 ]
 
@@ -109,7 +109,7 @@ def _write_table(
 
 def _write_summary(ws: Worksheet, vacancies: list[Vacancy], query: str, region: str) -> None:
     ws.title = "Сводка"
-    ws.column_dimensions["A"].width = 45
+    ws.column_dimensions["A"].width = 55
     for col in "BCD":
         ws.column_dimensions[col].width = 20
 
@@ -146,6 +146,11 @@ def _write_summary(ws: Worksheet, vacancies: list[Vacancy], query: str, region: 
         chart.style = 10
         chart.legend = None
         chart.height, chart.width = 7.5, 16
+        # без этого новые версии Excel прячут оси и подписи
+        chart.x_axis.delete = False
+        chart.y_axis.delete = False
+        chart.y_axis.numFmt = MONEY
+        chart.y_axis.majorGridlines = None
         values = Reference(ws, min_col=3, min_row=exp_header, max_row=exp_header + len(experience_rows))
         labels = Reference(ws, min_col=1, min_row=exp_header + 1, max_row=exp_header + len(experience_rows))
         chart.add_data(values, titles_from_data=True)
