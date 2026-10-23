@@ -36,7 +36,11 @@ def _clean_text(value) -> str:
     if not isinstance(value, str):
         return ""
     value = value.replace("\xa0", " ")
-    return re.sub(r"\s+", " ", value).strip().strip('"«»').strip()
+    return re.sub(r"\s+", " ", value).strip()
+
+
+# Портал пишет один и тот же навык то как «SQL», то как «Навык работы с SQL»
+SKILL_PREFIX = re.compile(r"^(навыки?|умение|знание)\s+работы\s+(с|со|в)\s+", re.IGNORECASE)
 
 
 def _parse_date(value) -> date | None:
@@ -57,8 +61,9 @@ def _experience(raw: dict) -> int | None:
 def _skills(raw: dict) -> list[str]:
     seen: dict[str, str] = {}
     for skill in raw.get("skills") or []:
-        skill = _clean_text(skill)
+        skill = SKILL_PREFIX.sub("", _clean_text(skill))
         if skill:
+            skill = skill[0].upper() + skill[1:]
             seen.setdefault(skill.lower(), skill)
     return list(seen.values())
 
